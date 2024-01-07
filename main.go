@@ -4,6 +4,7 @@ import (
 	"app/busstationgo/routers"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -23,5 +24,6 @@ func main() {
 	ticketGroup := router.Group("/tickets")
 	ticketGroup.Any("/", gin.WrapH(ticketRouter))
 
-	router.Run("localhost:8080")
+	log.Fatal(http.ListenAndServe(":8080", router))
+	fmt.Println("Listening on port 8080")
 }
