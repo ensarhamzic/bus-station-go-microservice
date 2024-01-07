@@ -6,6 +6,10 @@ import (
 	"log"
 	"net/http"
 
+	healthcheck "github.com/tavsec/gin-healthcheck"
+	"github.com/tavsec/gin-healthcheck/checks"
+	"github.com/tavsec/gin-healthcheck/config"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -24,6 +28,8 @@ func main() {
 	ticketGroup := router.Group("/tickets")
 	ticketGroup.Any("/", gin.WrapH(ticketRouter))
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	healthcheck.New(router, config.DefaultConfig(), []checks.Check{})
+
 	fmt.Println("Listening on port 8080")
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
