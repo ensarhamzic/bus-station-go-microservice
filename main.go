@@ -23,12 +23,9 @@ func main() {
 	}
 
 	r := gin.Default()
-	r := gin.Default()
 
 	ticketRouter := routers.TicketsRouter()
 
-	ticketGroup := r.Group("/tickets")
-	ticketGroup.Any("/*path", gin.WrapH(ticketRouter))
 	ticketGroup := r.Group("/tickets")
 	ticketGroup.Any("/*path", gin.WrapH(ticketRouter))
 
@@ -45,6 +42,5 @@ func main() {
 	go controllers.StartMessageConsumer()
 
 	fmt.Println("Listening on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", r))
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
