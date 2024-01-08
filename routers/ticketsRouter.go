@@ -11,7 +11,9 @@ func TicketsRouter() *gin.Engine {
 
 	ticketsGroup := router.Group("/tickets")
 	{
-		ticketsGroup.POST("/", controllers.BuyTicket)
+		ticketsGroup.POST("/buy", controllers.BuyTicket)
+		ticketsGroup.POST("/book", controllers.BookTicket)
+		ticketsGroup.POST("/confirm/:id", controllers.ConfirmTicket)
 	}
 
 	return router
