@@ -2,6 +2,7 @@ package main
 
 import (
 	"app/busstationgo/controllers"
+	"app/busstationgo/controllers"
 	"app/busstationgo/routers"
 	"fmt"
 	"log"
@@ -29,17 +30,7 @@ func main() {
 	ticketGroup := r.Group("/tickets")
 	ticketGroup.Any("/*path", gin.WrapH(ticketRouter))
 
-	healthcheck.New(r, config.DefaultConfig(), []checks.Check{})
-
-	c := cron.New()
-
-	c.AddFunc("@every 5m", func() {
-		controllers.CheckExpiredReservations()
-	})
-
-	c.Start()
-
-	go controllers.StartMessageConsumer()
+	healthcheck.New(router, config.DefaultConfig(), []checks.Check{})
 
 	fmt.Println("Listening on port 8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
