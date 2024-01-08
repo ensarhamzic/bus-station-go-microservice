@@ -2,7 +2,6 @@ package main
 
 import (
 	"app/busstationgo/controllers"
-	"app/busstationgo/controllers"
 	"app/busstationgo/routers"
 	"fmt"
 	"log"
@@ -24,14 +23,28 @@ func main() {
 	}
 
 	r := gin.Default()
+	r := gin.Default()
 
 	ticketRouter := routers.TicketsRouter()
 
 	ticketGroup := r.Group("/tickets")
 	ticketGroup.Any("/*path", gin.WrapH(ticketRouter))
+	ticketGroup := r.Group("/tickets")
+	ticketGroup.Any("/*path", gin.WrapH(ticketRouter))
 
-	healthcheck.New(router, config.DefaultConfig(), []checks.Check{})
+	healthcheck.New(r, config.DefaultConfig(), []checks.Check{})
+
+	c := cron.New()
+
+	c.AddFunc("@every 5m", func() {
+		controllers.CheckExpiredReservations()
+	})
+
+	c.Start()
+
+	go controllers.StartMessageConsumer()
 
 	fmt.Println("Listening on port 8080")
+	log.Fatal(http.ListenAndServe(":8080", r))
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
