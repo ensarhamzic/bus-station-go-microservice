@@ -1,11 +1,13 @@
 package main
 
 import (
+	"app/busstationgo/controllers"
 	"app/busstationgo/routers"
 	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/robfig/cron"
 	healthcheck "github.com/tavsec/gin-healthcheck"
 	"github.com/tavsec/gin-healthcheck/checks"
 	"github.com/tavsec/gin-healthcheck/config"
@@ -19,17 +21,24 @@ func main() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	fmt.Println("Server is getting started...")
 
-	router := gin.Default()
+	r := gin.Default()
 
 	ticketRouter := routers.TicketsRouter()
 
-	ticketGroup := router.Group("/tickets")
-	ticketGroup.Any("/", gin.WrapH(ticketRouter))
+	ticketGroup := r.Group("/tickets")
+	ticketGroup.Any("/*path", gin.WrapH(ticketRouter))
 
-	healthcheck.New(router, config.DefaultConfig(), []checks.Check{})
+	healthcheck.New(r, config.DefaultConfig(), []checks.Check{})
+
+	c := cron.New()
+
+	c.AddFunc("@every 5m", func() {
+		controllers.CheckExpiredReservations()
+	})
+
+	c.Start()
 
 	fmt.Println("Listening on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(":8080", r))
 }
