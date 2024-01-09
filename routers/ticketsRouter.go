@@ -9,7 +9,7 @@ import (
 func TicketsRouter() *gin.Engine {
 	router := gin.Default()
 
-	ticketsGroup := router.Group("/tickets")
+	ticketsGroup := router.Group(TicketsBaseRoute)
 	{
 		ticketsGroup.POST("/buy", controllers.BuyTicket)
 		ticketsGroup.POST("/book", controllers.BookTicket)

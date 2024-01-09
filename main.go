@@ -26,7 +26,7 @@ func main() {
 
 	ticketRouter := routers.TicketsRouter()
 
-	ticketGroup := r.Group("/tickets")
+	ticketGroup := r.Group(routers.TicketsBaseRoute)
 	ticketGroup.Any("/*path", gin.WrapH(ticketRouter))
 
 	healthcheck.New(r, config.DefaultConfig(), []checks.Check{})
