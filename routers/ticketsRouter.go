@@ -14,6 +14,7 @@ func TicketsRouter() *gin.Engine {
 		ticketsGroup.POST("/buy", controllers.BuyTicket)
 		ticketsGroup.POST("/book", controllers.BookTicket)
 		ticketsGroup.POST("/confirm/:id", controllers.ConfirmTicket)
+		ticketsGroup.GET("/check/:routeId/:seatNo", controllers.CheckTicketAvailability)
 	}
 
 	return router

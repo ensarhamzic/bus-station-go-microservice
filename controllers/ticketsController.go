@@ -281,3 +281,38 @@ func StartMessageConsumer() {
 		fmt.Println("Tickets for deleted route deleted")
 	}
 }
+
+func CheckTicketAvailability(c *gin.Context) {
+	var ctx, cancel = context.WithCancel(context.Background())
+	defer cancel()
+
+	routeId := c.Param("routeId")
+	seatNo := c.Param("seatNo")
+
+	println(routeId)
+	println(seatNo)
+
+	routeIdInt, err := strconv.Atoi(routeId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid route id"})
+		return
+	}
+
+	seatNoInt, err := strconv.Atoi(seatNo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid seat number"})
+		return
+	}
+
+	routeSR := ticketsCollection.FindOne(ctx, bson.M{"routeId": routeIdInt, "seatNo": seatNoInt})
+
+	println(routeSR.Err())
+	println(routeSR)
+
+	if routeSR.Err() == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Seat already taken"})
+		return
+	}
+
+	c.JSON(http.StatusOK, true)
+}
